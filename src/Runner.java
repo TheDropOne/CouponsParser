@@ -5,7 +5,7 @@ import java.util.*;
 public class Runner {
 
     private static List<HotsaleItem> list;
-    private static final String RELATIVE_PATH = "C:\\CouponsParser\\src\\dump_hotsale_ru.yml";
+    private static final String RELATIVE_PATH = "src/dump_hotsale_ru.yml";
 
     public static void main(String[] args) throws IOException {
         list = new LinkedList<>();
@@ -68,21 +68,25 @@ public class Runner {
         System.out.println("List sorted, time = " + (new Date().getTime() - currentTime) / 1e3 + " sec");
 
 
-        int DEFAULT_RATE = 70;
-        String containsSearch = "";
+        int DEFAULT_RATE = 30;
+        String containsSearch = "cable";
 
-        File file0_20, file21_50, file51_100, file101_200;
-        BufferedWriter filewriter0_20, filewriter21_50, filewriter51_100, filewriter101_200;
+        File file0_20, file21_50, file51_100, file101_200, file201_500, file501_1000;
+        BufferedWriter filewriter0_20, filewriter21_50, filewriter51_100, filewriter101_200, filewriter201_500, filewriter501_1000;
         file0_20 = new File("file0_20_rate" + DEFAULT_RATE);
         file21_50 = new File("file21_50_rate" + DEFAULT_RATE);
         file51_100 = new File("file51_100_rate" + DEFAULT_RATE);
         file101_200 = new File("file100_200_rate" + DEFAULT_RATE);
+        file201_500 = new File("file201_500_rate" + DEFAULT_RATE);
+        file501_1000 = new File("file501_1000_rate" + DEFAULT_RATE);
         filewriter0_20 = new BufferedWriter(new FileWriter(file0_20));
         filewriter21_50 = new BufferedWriter(new FileWriter(file21_50));
         filewriter51_100 = new BufferedWriter(new FileWriter(file51_100));
         filewriter101_200 = new BufferedWriter(new FileWriter(file101_200));
+        filewriter201_500 = new BufferedWriter(new FileWriter(file201_500));
+        filewriter501_1000 = new BufferedWriter(new FileWriter(file501_1000));
 
-        int count20 = 0, count50 = 0, count100 = 0, count200 = 0;
+        int count20 = 0, count50 = 0, count100 = 0, count200 = 0, count500 = 0, count1000 = 0;
         int iterator = 0;
         System.out.println("Writing to file, time = " + (new Date().getTime() - currentTime) / 1e3 + " sec");
         for (HotsaleItem hotsaleItem : list) {
@@ -90,24 +94,32 @@ public class Runner {
             if (iterator % 100000 == 0) {
                 System.out.println("Matched conditions - " + iterator + " items. Time = " + (new Date().getTime() - currentTime) / 1e3 + " sec");
             }
-            if (hotsaleItem.price > 0.0 && hotsaleItem.price <= 0.20 && hotsaleItem.commissionRate > DEFAULT_RATE) {
+            if (hotsaleItem.salePrice > 0.0 && hotsaleItem.salePrice <= 0.20 && hotsaleItem.commissionRate > DEFAULT_RATE) {
                 filewriter0_20.write(String.valueOf(hotsaleItem));
                 count20++;
                 continue;
             }
-            if (hotsaleItem.price > 0.21 && hotsaleItem.price <= 0.50 && hotsaleItem.commissionRate > DEFAULT_RATE) {
+            if (hotsaleItem.salePrice > 0.21 && hotsaleItem.salePrice <= 0.50 && hotsaleItem.commissionRate > DEFAULT_RATE) {
                 filewriter21_50.write(String.valueOf(hotsaleItem));
                 count50++;
                 continue;
             }
-            if (hotsaleItem.price > 0.51 && hotsaleItem.price <= 1.00 && hotsaleItem.commissionRate > DEFAULT_RATE) {
+            if (hotsaleItem.salePrice > 0.51 && hotsaleItem.salePrice <= 1.00 && hotsaleItem.commissionRate > DEFAULT_RATE) {
                 filewriter51_100.write(String.valueOf(hotsaleItem));
                 count100++;
                 continue;
             }
-            if (hotsaleItem.price > 1.01 && hotsaleItem.price <= 2.00 && hotsaleItem.commissionRate > DEFAULT_RATE) {
+            if (hotsaleItem.salePrice > 1.01 && hotsaleItem.salePrice <= 2.00 && hotsaleItem.commissionRate > DEFAULT_RATE) {
                 filewriter101_200.write(String.valueOf(hotsaleItem));
                 count200++;
+            }
+            if (hotsaleItem.salePrice > 2.01 && hotsaleItem.salePrice <= 5.00 && hotsaleItem.commissionRate > DEFAULT_RATE) {
+                filewriter201_500.write(String.valueOf(hotsaleItem));
+                count500++;
+            }
+            if (hotsaleItem.salePrice > 5.01 && hotsaleItem.salePrice <= 10.00 && hotsaleItem.commissionRate > DEFAULT_RATE) {
+                filewriter501_1000.write(String.valueOf(hotsaleItem));
+                count1000++;
             }
         }
         System.out.println("Writing finished. Count = " + count20 + "__u20, " + count50 + "__u50, " + count100 + "__u100, " + count200 + "__u200 for COMMISSION-RATE = " + DEFAULT_RATE);
@@ -115,13 +127,13 @@ public class Runner {
         filewriter21_50.close();
         filewriter51_100.close();
         filewriter101_200.close();
+        filewriter201_500.close();
+        filewriter501_1000.close();
         System.out.println("Done. Total time = " + (new Date().getTime() - currentTime) / 1e3 + " sec\n");
 
         //noinspection ConstantConditions
         if (!containsSearch.equals("")) {
-
-            list.sort((o1, o2) -> (int) (o1.salePrice * 100 - o2.salePrice * 100));
-
+//            list.sort((o1, o2) -> (int) (o1.salePrice * 100 - o2.salePrice * 100));
 
             containsSearch = containsSearch.toLowerCase();
             iterator = 0;
